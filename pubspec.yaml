@@ -30,6 +30,8 @@ dependencies:
   retrofit:
   logger: any  #for logging purpose
   mocktail:
+  bloc_test: ^9.0.2
+  flutter_bloc: ^8.0.1
   flutter:
     sdk: flutter
 
