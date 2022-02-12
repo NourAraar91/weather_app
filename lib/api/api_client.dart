@@ -10,7 +10,7 @@ abstract class APIClient {
   factory APIClient(Dio dio) = _APIClient;
 
   @GET("/weather")
-  Future<Weather> getWeatherByLatAndLng(
+  Future<CurrentWeather> getWeatherByLatAndLng(
     @Query("lat") double lat,
     @Query("lon") double lon, {
     @Query("units") String units = 'metrics',

@@ -10,7 +10,7 @@ void main() {
   late WeatherDataSourceImpl dataSource;
   late MockAPIClient apiClient;
 
-  Weather _mockWeather = Weather();
+  CurrentWeather _mockWeather = CurrentWeather();
 
   setUp(() async {
     registerFallbackValue(Uri());

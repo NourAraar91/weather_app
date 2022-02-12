@@ -8,7 +8,7 @@ class WeatherDataSourceImpl implements WeatherDataSource {
 
   WeatherDataSourceImpl({required this.apiClient});
 
-  Future<Weather> getWeatherByLatAndLng(double lat, double lon) {
+  Future<CurrentWeather> getWeatherByLatAndLng(double lat, double lon) {
     return apiClient.getWeatherByLatAndLng(lat, lon);
   }
 }
