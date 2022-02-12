@@ -113,9 +113,34 @@ void main() {
             (_) async => _mockForecastResult,
           );
 
-          final response = await dataSource.getForecastWeatherByLatAndLng(3.14, 101.69);
+          final response =
+              await dataSource.getForecastWeatherByLatAndLng(3.14, 101.69);
 
           expect(response, _mockForecastResult);
+        },
+      );
+
+      test(
+        'should throw an Exception when the response code is 404 or other (unsuccess)',
+        () async {
+          // arrange
+          when(() => apiClient.getForecastWeatherByLatAndLng(3.14, 101.69)).thenThrow(
+            DioError(
+              response: Response(
+                data: 'Something went wrong',
+                statusCode: 404,
+                requestOptions: RequestOptions(path: ''),
+              ),
+              requestOptions: RequestOptions(path: ''),
+            ),
+          );
+          // act
+          final call = dataSource.getForecastWeatherByLatAndLng;
+          // assert
+          expect(
+            () => call(3.14, 101.69),
+            throwsA(const TypeMatcher<ServerException>()),
+          );
         },
       );
     },

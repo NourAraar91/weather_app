@@ -19,6 +19,10 @@ class WeatherDataSourceImpl implements WeatherDataSource {
   }
 
   Future<ForcastResult> getForecastWeatherByLatAndLng(double lat, double lon) {
-    return apiClient.getForecastWeatherByLatAndLng(lat, lon);
+    try {
+      return apiClient.getForecastWeatherByLatAndLng(lat, lon);
+    } on DioError catch (_) {
+      throw ServerException();
+    }
   }
 }
