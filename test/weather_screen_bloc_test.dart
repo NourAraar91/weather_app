@@ -36,4 +36,19 @@ void main() {
   test('should have initial state as [WeatherBlocInitialState]', () {
     expect(weatherScreenBloc.state.runtimeType, WeatherBlocInitialState);
   });
+
+  blocTest(
+    'should have [LoadingState, WeatherLoadedState] when call featchWeather',
+    build: () => weatherScreenBloc,
+    act: (WeatherScreenBloc bloc) {
+      when(() => apiClient.getWeatherByLatAndLng(
+              _kualaLumpur.lat, _kualaLumpur.lon))
+          .thenAnswer((_) async => _currentWeather);
+      bloc.featchWeather();
+    },
+    expect: () => [
+      isA<LoadingState>(),
+      isA<WeatherLoadedState>(),
+    ],
+  );
 }

@@ -10,8 +10,17 @@ class WeatherScreenBloc extends Cubit<WeatherBlocState> {
     required this.dataSource,
     required this.city,
   }) : super(WeatherBlocInitialState());
+
+  void featchWeather() {
+    emit(LoadingState());
+    emit(WeatherLoadedState());
+  }
 }
 
 abstract class WeatherBlocState {}
 
 class WeatherBlocInitialState implements WeatherBlocState {}
+
+class LoadingState implements WeatherBlocState {}
+
+class WeatherLoadedState implements WeatherBlocState {}
