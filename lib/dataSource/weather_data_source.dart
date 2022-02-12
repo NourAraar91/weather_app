@@ -16,4 +16,8 @@ class WeatherDataSourceImpl implements WeatherDataSource {
       throw ServerException();
     }
   }
+
+  Future<void> getForecastWeatherByLatAndLng(double lat, double lon) {
+    return apiClient.getForecastWeatherByLatAndLng(lat, lon);
+  }
 }

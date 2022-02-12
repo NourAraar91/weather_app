@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:weather_app/api/api_client.dart';
 import 'package:weather_app/dataSource/weather_data_source.dart';
+import 'package:weather_app/models/forecast_result.dart';
 import 'package:weather_app/models/weather.dart';
 import 'package:dio/dio.dart';
 
@@ -12,6 +13,7 @@ void main() {
   late MockAPIClient apiClient;
 
   CurrentWeather _mockWeather = CurrentWeather();
+  ForcastResult _mockForecastResult = ForcastResult();
 
   setUp(() async {
     registerFallbackValue(Uri());
@@ -76,6 +78,29 @@ void main() {
             () => call(3.14, 101.69),
             throwsA(const TypeMatcher<ServerException>()),
           );
+        },
+      );
+    },
+  );
+
+  group(
+    'get /forecast',
+    () {
+      test(
+        'should perform a GET request on /forecast?lat=3.14&lon=101.69',
+        () async {
+          // arrange
+          when(
+            () => apiClient.getForecastWeatherByLatAndLng(3.14, 101.69),
+          ).thenAnswer(
+            (_) async => _mockForecastResult,
+          );
+
+          // act
+          dataSource.getForecastWeatherByLatAndLng(3.14, 101.69);
+          // assert
+          verify(() => apiClient.getForecastWeatherByLatAndLng(3.14, 101.69));
+          verifyNoMoreInteractions(apiClient);
         },
       );
     },
