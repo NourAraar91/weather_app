@@ -103,6 +103,21 @@ void main() {
           verifyNoMoreInteractions(apiClient);
         },
       );
+
+      test(
+        'should return ForecastResult() when get response /forecast?lat=3.14&lon=101.69',
+        () async {
+          when(
+            () => apiClient.getForecastWeatherByLatAndLng(3.14, 101.69),
+          ).thenAnswer(
+            (_) async => _mockForecastResult,
+          );
+
+          final response = await dataSource.getForecastWeatherByLatAndLng(3.14, 101.69);
+
+          expect(response, _mockForecastResult);
+        },
+      );
     },
   );
 }

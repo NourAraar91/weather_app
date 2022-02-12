@@ -3,6 +3,7 @@ import 'dart:ffi';
 import 'package:dio/dio.dart';
 import 'package:retrofit/retrofit.dart';
 import 'package:weather_app/constants/config.dart';
+import 'package:weather_app/models/forecast_result.dart';
 import 'package:weather_app/models/weather.dart';
 
 part 'api_client.g.dart';
@@ -21,8 +22,8 @@ abstract class APIClient {
     @Query("appid") String appid = Config.APP_ID,
   });
 
-  @GET('')
-  Future<void> getForecastWeatherByLatAndLng(
+  @GET('/forecast')
+  Future<ForcastResult> getForecastWeatherByLatAndLng(
     @Query("lat") double lat,
     @Query("lon") double lon, {
     @Query("units") String units = 'metrics',

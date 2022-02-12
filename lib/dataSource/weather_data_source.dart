@@ -1,4 +1,5 @@
 import 'package:weather_app/api/api_client.dart';
+import 'package:weather_app/models/forecast_result.dart';
 import 'package:weather_app/models/weather.dart';
 import 'package:dio/dio.dart';
 
@@ -17,7 +18,7 @@ class WeatherDataSourceImpl implements WeatherDataSource {
     }
   }
 
-  Future<void> getForecastWeatherByLatAndLng(double lat, double lon) {
+  Future<ForcastResult> getForecastWeatherByLatAndLng(double lat, double lon) {
     return apiClient.getForecastWeatherByLatAndLng(lat, lon);
   }
 }
