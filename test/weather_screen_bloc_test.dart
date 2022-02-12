@@ -6,6 +6,7 @@ import 'package:weather_app/bloc/weather_screen_bloc.dart';
 import 'package:weather_app/dataSource/weather_data_source.dart';
 import 'package:weather_app/models/city.dart';
 import 'package:weather_app/models/weather.dart';
+import 'package:dio/dio.dart';
 
 import 'weather_data_source_test.dart';
 
@@ -64,6 +65,29 @@ void main() {
     expect: () => [
       LoadingState(),
       WeatherLoadedState(currentWeather: _currentWeather),
+    ],
+  );
+
+  blocTest(
+    'should have a [WeatherFailureState] response when featchWeather return 404',
+    build: () => weatherScreenBloc,
+    act: (WeatherScreenBloc bloc) {
+      when(() => apiClient.getWeatherByLatAndLng(
+          _kualaLumpur.lat, _kualaLumpur.lon)).thenThrow(
+        DioError(
+          response: Response(
+            data: 'Something went wrong',
+            statusCode: 404,
+            requestOptions: RequestOptions(path: ''),
+          ),
+          requestOptions: RequestOptions(path: ''),
+        ),
+      );
+      bloc.featchWeather();
+    },
+    expect: () => [
+      LoadingState(),
+      WeatherFailureState(),
     ],
   );
 }
