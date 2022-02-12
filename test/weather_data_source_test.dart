@@ -3,6 +3,7 @@ import 'package:mocktail/mocktail.dart';
 import 'package:weather_app/api/api_client.dart';
 import 'package:weather_app/dataSource/weather_data_source.dart';
 import 'package:weather_app/models/weather.dart';
+import 'package:dio/dio.dart';
 
 class MockAPIClient extends Mock implements APIClient {}
 
@@ -49,6 +50,30 @@ void main() {
       final response = await dataSource.getWeatherByLatAndLng(3.14, 101.69);
 
       expect(response, _mockWeather);
+    },
+  );
+
+  test(
+    'should throw an Exception when the response code is 404 or other (unsuccess)',
+    () async {
+      // arrange
+      when(() => apiClient.getWeatherByLatAndLng(3.14, 101.69)).thenThrow(
+        DioError(
+          response: Response(
+            data: 'Something went wrong',
+            statusCode: 404,
+            requestOptions: RequestOptions(path: ''),
+          ),
+          requestOptions: RequestOptions(path: ''),
+        ),
+      );
+      // act
+      final call = dataSource.getWeatherByLatAndLng;
+      // assert
+      expect(
+        () => call(3.14, 101.69),
+        throwsA(const TypeMatcher<ServerException>()),
+      );
     },
   );
 }

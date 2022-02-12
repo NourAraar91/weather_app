@@ -5,6 +5,8 @@ import 'package:weather_app/models/weather.dart';
 
 part 'api_client.g.dart';
 
+class ServerException implements Exception {}
+
 @RestApi(baseUrl: 'http://api.openweathermap.org/data/2.5')
 abstract class APIClient {
   factory APIClient(Dio dio) = _APIClient;
