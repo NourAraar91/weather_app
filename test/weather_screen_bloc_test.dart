@@ -12,7 +12,7 @@ void main() {
 
   late WeatherScreenBloc weatherScreenBloc;
 
-  City _kualaLumpur = City();
+  City _kualaLumpur = City(lat: 3.1478, lon: 101.6953);
 
   setUp(() async {
     apiClient = MockAPIClient();
@@ -22,5 +22,10 @@ void main() {
       dataSource: dataSource,
       city: _kualaLumpur,
     );
+  });
+
+  test('test city coords', () {
+    expect(weatherScreenBloc.city.lat, _kualaLumpur.lat);
+    expect(weatherScreenBloc.city.lon, _kualaLumpur.lon);
   });
 }
