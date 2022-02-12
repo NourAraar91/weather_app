@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:retrofit/retrofit.dart';
 import 'package:weather_app/constants/config.dart';
+import 'package:weather_app/models/weather.dart';
 
 part 'api_client.g.dart';
 
@@ -9,7 +10,7 @@ abstract class APIClient {
   factory APIClient(Dio dio) = _APIClient;
 
   @GET("/weather")
-  Future<void> getWeatherByLatAndLng(
+  Future<Weather> getWeatherByLatAndLng(
     @Query("lat") double lat,
     @Query("lon") double lon, {
     @Query("units") String units = 'metrics',

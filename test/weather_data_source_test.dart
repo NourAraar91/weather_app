@@ -10,6 +10,8 @@ void main() {
   late WeatherDataSourceImpl dataSource;
   late MockAPIClient apiClient;
 
+  Weather _mockWeather = Weather();
+
   setUp(() async {
     registerFallbackValue(Uri());
 
@@ -25,7 +27,7 @@ void main() {
       when(
         () => apiClient.getWeatherByLatAndLng(3.14, 101.69),
       ).thenAnswer(
-        (_) async => Weather(),
+        (_) async => _mockWeather,
       );
 
       // act
@@ -33,6 +35,20 @@ void main() {
       // assert
       verify(() => apiClient.getWeatherByLatAndLng(3.14, 101.69));
       verifyNoMoreInteractions(apiClient);
+    },
+  );
+  test(
+    'should return Weather() when get response /weather?lat=3.14&lon=101.69',
+    () async {
+      when(
+        () => apiClient.getWeatherByLatAndLng(3.14, 101.69),
+      ).thenAnswer(
+        (_) async => _mockWeather,
+      );
+
+      final response = await dataSource.getWeatherByLatAndLng(3.14, 101.69);
+
+      expect(response, _mockWeather);
     },
   );
 }

@@ -42,6 +42,7 @@ dev_dependencies:
   retrofit_generator:
   build_runner:
   json_serializable:
+  json_annotation: ^4.4.0
   flutter_test:
     sdk: flutter
 
