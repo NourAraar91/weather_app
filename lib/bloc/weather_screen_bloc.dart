@@ -1,6 +1,8 @@
+import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:weather_app/dataSource/weather_data_source.dart';
 import 'package:weather_app/models/city.dart';
+import 'package:weather_app/models/weather.dart';
 
 class WeatherScreenBloc extends Cubit<WeatherBlocState> {
   final WeatherDataSource dataSource;
@@ -13,14 +15,28 @@ class WeatherScreenBloc extends Cubit<WeatherBlocState> {
 
   void featchWeather() {
     emit(LoadingState());
-    emit(WeatherLoadedState());
+    dataSource.getWeatherByLatAndLng(city.lat, city.lon).then((response) {
+      emit(WeatherLoadedState(currentWeather: response));
+    });
   }
 }
 
-abstract class WeatherBlocState {}
+abstract class WeatherBlocState extends Equatable {}
 
-class WeatherBlocInitialState implements WeatherBlocState {}
+class WeatherBlocInitialState extends WeatherBlocState {
+  @override
+  List<Object?> get props => [];
+}
 
-class LoadingState implements WeatherBlocState {}
+class LoadingState extends WeatherBlocState {
+  @override
+  List<Object?> get props => [];
+}
 
-class WeatherLoadedState implements WeatherBlocState {}
+class WeatherLoadedState extends WeatherBlocState {
+  final CurrentWeather currentWeather;
+  WeatherLoadedState({required this.currentWeather});
+
+  @override
+  List<Object?> get props => [currentWeather];
+}

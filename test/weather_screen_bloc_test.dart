@@ -1,4 +1,5 @@
 import 'package:bloc_test/bloc_test.dart';
+import 'package:equatable/equatable.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:weather_app/bloc/weather_screen_bloc.dart';
@@ -49,6 +50,20 @@ void main() {
     expect: () => [
       isA<LoadingState>(),
       isA<WeatherLoadedState>(),
+    ],
+  );
+  blocTest(
+    'should have a weather response when featchWeather return',
+    build: () => weatherScreenBloc,
+    act: (WeatherScreenBloc bloc) {
+      when(() => apiClient.getWeatherByLatAndLng(
+              _kualaLumpur.lat, _kualaLumpur.lon))
+          .thenAnswer((_) async => _currentWeather);
+      bloc.featchWeather();
+    },
+    expect: () => [
+      LoadingState(),
+      WeatherLoadedState(currentWeather: _currentWeather),
     ],
   );
 }
