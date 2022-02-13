@@ -23,7 +23,12 @@ class MockDataProvider {
   }
 
   static ForcastResult currentForecastFixture() {
-    return ForcastResult();
+    return ForcastResult(
+        list: [],
+        city: Place(
+          coord: Coord(lat: 2.4, lon: 110.1),
+          name: "Kuala Lumpur",
+        ));
   }
 }
 
