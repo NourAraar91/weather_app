@@ -22,12 +22,11 @@ class DataStore {
   SharedPreferences get prefs => _prefs;
 
   read(String key) async {
-    final data = prefs.getString(key);
-    return data != null ? json.decode(data) : null;
+    return prefs.getString(key);
   }
 
   save(String key, value) async {
-    prefs.setString(key, json.encode(value));
+    prefs.setString(key, value);
   }
 
   remove(String key) async {

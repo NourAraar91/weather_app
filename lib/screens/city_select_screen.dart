@@ -6,6 +6,7 @@ import 'package:weather_app/bloc/weather_screen_bloc.dart';
 import 'package:weather_app/dataSource/city_list_data_source.dart';
 import 'package:weather_app/dataSource/weather_data_source.dart';
 import 'package:weather_app/models/city.dart';
+import 'package:weather_app/screens/city_selection_screen.dart';
 import 'package:weather_app/widgets/error_widget.dart';
 import 'package:weather_app/widgets/tempruter_text.dart';
 import 'package:dio/dio.dart';
@@ -31,9 +32,13 @@ class CityListScreenBloc extends Cubit<CityListScreenState> {
 
   CityListScreenBloc() : super(CityListScreenInitialState());
 
-  featchCityList() {
-    final cities = cityListDataSource.featchCities();
+  featchSelectedCities() {
+    final cities = cityListDataSource.featchSelectedCities();
     emit(CityListScreenLoadedState(cities: cities));
+  }
+
+  List<City> featchCities() {
+    return cityListDataSource.featchCities();
   }
 }
 
@@ -49,36 +54,56 @@ class _CityListScreenState extends State<CityListScreen> {
 
   @override
   void initState() {
-    _bloc.featchCityList();
+    _bloc.featchSelectedCities();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        appBar: AppBar(
+          elevation: 0,
+          backgroundColor: Colors.transparent,
+          actions: [
+            IconButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) {
+                      return CitySelectionScreen(
+                          items: _bloc.featchCities()
+                    );})
+                  );
+                },
+                icon: const Icon(
+                  Icons.add_circle_outline,
+                  color: Colors.black,
+                ))
+          ],
+        ),
         body: BlocBuilder<CityListScreenBloc, CityListScreenState>(
-      bloc: _bloc,
-      builder: (context, state) {
-        if (state is CityListScreenLoadedState) {
-          return ListView.builder(
-              itemCount: state.cities.length,
-              itemBuilder: (context, index) {
-                return CityWeatherWidget(
-                  weatherScreenBloc: WeatherScreenBloc(
-                      city: state.cities[index],
-                      dataSource: WeatherDataSourceImpl(
-                        apiClient: APIClient(
-                          Dio(),
-                        ),
-                      )),
-                );
-              });
-        }
-        return const Center(
-          child: CircularProgressIndicator(),
-        );
-      },
-    ));
+          bloc: _bloc,
+          builder: (context, state) {
+            if (state is CityListScreenLoadedState) {
+              return ListView.builder(
+                  itemCount: state.cities.length,
+                  itemBuilder: (context, index) {
+                    return CityWeatherWidget(
+                      weatherScreenBloc: WeatherScreenBloc(
+                          city: state.cities[index],
+                          dataSource: WeatherDataSourceImpl(
+                            apiClient: APIClient(
+                              Dio(),
+                            ),
+                          )),
+                    );
+                  });
+            }
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          },
+        ));
   }
 
   @override
