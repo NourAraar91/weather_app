@@ -11,7 +11,6 @@ class MockAPIClient extends Mock implements APIClient {}
 class MockDataProvider {
   static CurrentWeather currentWeatherFixture() {
     return CurrentWeather(
-        id: 1,
         name: "Kuala Lumpur",
         dt: 16433020,
         weather: [],

@@ -45,7 +45,7 @@ class WeatherLoadedState extends WeatherBlocState {
   final CurrentWeather currentWeather;
   WeatherLoadedState({required this.currentWeather});
 
-  String get name => currentWeather.name;
+  String get name => currentWeather.name ?? "";
   int get tempMax => currentWeather.main.tempMax!.toInt();
   int get tempMin => currentWeather.main.tempMin!.toInt();
   String get description => currentWeather.weather.first.description ?? '';

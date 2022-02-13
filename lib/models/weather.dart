@@ -9,15 +9,13 @@ class CurrentWeather {
     required this.weather,
     required this.main,
     required this.dt,
-    required this.id,
-    required this.name,
+    this.name,
   });
 
   List<Weather> weather;
   MainClass main;
   int dt;
-  int id;
-  String name;
+  String? name;
 
   factory CurrentWeather.fromJson(Map<String, dynamic> json) =>
       _$CurrentWeatherFromJson(json);
@@ -27,14 +25,12 @@ class CurrentWeather {
 @JsonSerializable()
 class Weather {
   Weather({
-    this.id,
     this.main,
     this.description,
     this.icon,
     this.condition,
   });
 
-  final int? id;
   final String? main;
   final String? description;
   final String? icon;
