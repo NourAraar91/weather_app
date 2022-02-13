@@ -17,7 +17,7 @@ class _APIClient implements APIClient {
 
   @override
   Future<CurrentWeather> getWeatherByLatAndLng(lat, lon,
-      {units = 'metrics', appid = Config.APP_ID}) async {
+      {units = 'metric', appid = Config.APP_ID}) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{
       r'lat': lat,
@@ -39,7 +39,7 @@ class _APIClient implements APIClient {
 
   @override
   Future<ForcastResult> getForecastWeatherByLatAndLng(lat, lon,
-      {units = 'metrics', appid = Config.APP_ID}) async {
+      {units = 'metric', appid = Config.APP_ID}) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{
       r'lat': lat,
