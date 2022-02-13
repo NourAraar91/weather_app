@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:dio/dio.dart';
 import 'package:retrofit/retrofit.dart';
 import 'package:weather_app/constants/config.dart';
@@ -18,7 +16,7 @@ abstract class APIClient {
   Future<CurrentWeather> getWeatherByLatAndLng(
     @Query("lat") double lat,
     @Query("lon") double lon, {
-    @Query("units") String units = 'metrics',
+    @Query("units") String units = 'metric',
     @Query("appid") String appid = Config.APP_ID,
   });
 
@@ -26,7 +24,7 @@ abstract class APIClient {
   Future<ForcastResult> getForecastWeatherByLatAndLng(
     @Query("lat") double lat,
     @Query("lon") double lon, {
-    @Query("units") String units = 'metrics',
+    @Query("units") String units = 'metric',
     @Query("appid") String appid = Config.APP_ID,
   });
 }

@@ -8,12 +8,31 @@ import 'package:dio/dio.dart';
 
 class MockAPIClient extends Mock implements APIClient {}
 
+class MockDataProvider {
+  static CurrentWeather currentWeatherFixture() {
+    return CurrentWeather(
+        id: 1,
+        name: "Kuala Lumpur",
+        dt: 16433020,
+        weather: [],
+        main: MainClass(
+          temp: 30,
+          tempMax: 32,
+          tempMin: 28,
+        ));
+  }
+
+  static ForcastResult currentForecastFixture() {
+    return ForcastResult();
+  }
+}
+
 void main() {
   late WeatherDataSourceImpl dataSource;
   late MockAPIClient apiClient;
 
-  CurrentWeather _mockWeather = CurrentWeather();
-  ForcastResult _mockForecastResult = ForcastResult();
+  CurrentWeather _mockWeather = MockDataProvider.currentWeatherFixture();
+  ForcastResult _mockForecastResult = MockDataProvider.currentForecastFixture();
 
   setUp(() async {
     registerFallbackValue(Uri());
@@ -124,7 +143,8 @@ void main() {
         'should throw an Exception when the response code is 404 or other (unsuccess)',
         () async {
           // arrange
-          when(() => apiClient.getForecastWeatherByLatAndLng(3.14, 101.69)).thenThrow(
+          when(() => apiClient.getForecastWeatherByLatAndLng(3.14, 101.69))
+              .thenThrow(
             DioError(
               response: Response(
                 data: 'Something went wrong',
