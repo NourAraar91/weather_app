@@ -13,8 +13,7 @@ CurrentWeather _$CurrentWeatherFromJson(Map<String, dynamic> json) =>
           .toList(),
       main: MainClass.fromJson(json['main'] as Map<String, dynamic>),
       dt: json['dt'] as int,
-      id: json['id'] as int,
-      name: json['name'] as String,
+      name: json['name'] as String?,
     );
 
 Map<String, dynamic> _$CurrentWeatherToJson(CurrentWeather instance) =>
@@ -22,12 +21,10 @@ Map<String, dynamic> _$CurrentWeatherToJson(CurrentWeather instance) =>
       'weather': instance.weather,
       'main': instance.main,
       'dt': instance.dt,
-      'id': instance.id,
       'name': instance.name,
     };
 
 Weather _$WeatherFromJson(Map<String, dynamic> json) => Weather(
-      id: json['id'] as int?,
       main: json['main'] as String?,
       description: json['description'] as String?,
       icon: json['icon'] as String?,
@@ -36,7 +33,6 @@ Weather _$WeatherFromJson(Map<String, dynamic> json) => Weather(
     );
 
 Map<String, dynamic> _$WeatherToJson(Weather instance) => <String, dynamic>{
-      'id': instance.id,
       'main': instance.main,
       'description': instance.description,
       'icon': instance.icon,

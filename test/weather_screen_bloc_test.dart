@@ -18,7 +18,8 @@ void main() {
   late WeatherScreenBloc weatherScreenBloc;
   late ForecastWeatherScreenBloc forecastWeatherScreenBloc;
 
-  City _kualaLumpur = City(lat: 3.1478, lon: 101.6953);
+  City _kualaLumpur =
+      const City(lat: 3.1478, lon: 101.6953, name: "Kuala Lumpur");
 
   CurrentWeather _currentWeather = MockDataProvider.currentWeatherFixture();
 
