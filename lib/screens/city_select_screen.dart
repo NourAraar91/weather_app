@@ -2,11 +2,13 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:weather_app/api/api_client.dart';
+import 'package:weather_app/bloc/forecast_weather_screen_bloc.dart';
 import 'package:weather_app/bloc/weather_screen_bloc.dart';
 import 'package:weather_app/dataSource/city_list_data_source.dart';
 import 'package:weather_app/dataSource/weather_data_source.dart';
 import 'package:weather_app/models/city.dart';
 import 'package:weather_app/screens/city_selection_screen.dart';
+import 'package:weather_app/screens/city_weather_screen.dart';
 import 'package:weather_app/widgets/error_widget.dart';
 import 'package:weather_app/widgets/tempruter_text.dart';
 import 'package:dio/dio.dart';
@@ -138,94 +140,115 @@ class _CityWeatherWidgetState extends State<CityWeatherWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(8.0),
-      height: 150,
-      child: BlocBuilder<WeatherScreenBloc, WeatherBlocState>(
-          bloc: widget.weatherScreenBloc,
-          builder: (context, state) {
-            if (state is WeatherLoadedState) {
-              return Container(
-                height: 150,
-                padding: const EdgeInsets.all(16.0),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  image: DecorationImage(image: state.img, fit: BoxFit.fill),
-                ),
-                child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                state.name,
-                                style: const TextStyle(
-                                  fontSize: 28,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w500,
+    return InkWell(
+      onTap: () {
+        Navigator.pushReplacement(context,
+            MaterialPageRoute(builder: (context) {
+          return MultiBlocProvider(
+            providers: [
+              BlocProvider<WeatherScreenBloc>(
+                create: (BuildContext context) => widget.weatherScreenBloc,
+              ),
+              BlocProvider<ForecastWeatherScreenBloc>(
+                  create: (BuildContext context) => ForecastWeatherScreenBloc(
+                        dataSource:
+                            WeatherDataSourceImpl(apiClient: APIClient(Dio())),
+                        city: widget.weatherScreenBloc.city,
+                      )),
+            ],
+            child: const CityWeatherScreen(),
+          );
+        }));
+      },
+      child: Container(
+        padding: const EdgeInsets.all(8.0),
+        height: 150,
+        child: BlocBuilder<WeatherScreenBloc, WeatherBlocState>(
+            bloc: widget.weatherScreenBloc,
+            builder: (context, state) {
+              if (state is WeatherLoadedState) {
+                return Container(
+                  height: 150,
+                  padding: const EdgeInsets.all(16.0),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    image: DecorationImage(image: state.img, fit: BoxFit.fill),
+                  ),
+                  child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  state.name,
+                                  style: const TextStyle(
+                                    fontSize: 28,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w500,
+                                  ),
                                 ),
-                              ),
-                              const SizedBox(
-                                height: 8,
-                              ),
-                              Text(
-                                state.time,
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w500,
+                                const SizedBox(
+                                  height: 8,
                                 ),
+                                Text(
+                                  state.time,
+                                  style: const TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            TempretureText(
+                              tempreture: state.temp,
+                              style: const TextStyle(
+                                fontSize: 36,
+                                color: Colors.white,
                               ),
-                            ],
-                          ),
-                          TempretureText(
-                            tempreture: state.temp,
-                            style: const TextStyle(
-                              fontSize: 36,
-                              color: Colors.white,
                             ),
-                          ),
-                        ],
-                      ),
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            state.description,
-                            style: const TextStyle(
-                              fontSize: 14,
-                              color: Colors.white,
+                          ],
+                        ),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              state.description,
+                              style: const TextStyle(
+                                fontSize: 14,
+                                color: Colors.white,
+                              ),
                             ),
-                          ),
-                          Text(
-                            "H:${state.tempMax}  L:${state.tempMin}",
-                            style: const TextStyle(
-                              fontSize: 14,
-                              color: Colors.white,
-                            ),
-                          )
-                        ],
-                      )
-                    ]),
+                            Text(
+                              "H:${state.tempMax}  L:${state.tempMin}",
+                              style: const TextStyle(
+                                fontSize: 14,
+                                color: Colors.white,
+                              ),
+                            )
+                          ],
+                        )
+                      ]),
+                );
+              }
+              if (state is WeatherFailureState) {
+                return CustomErrorWidget(
+                    errorMessage: "Something went wrong",
+                    onRetryPressed: () {
+                      widget.weatherScreenBloc.featchWeather();
+                    });
+              }
+              return const Center(
+                child: CircularProgressIndicator(),
               );
-            }
-            if (state is WeatherFailureState) {
-              return CustomErrorWidget(
-                  errorMessage: "Something went wrong",
-                  onRetryPressed: () {
-                    widget.weatherScreenBloc.featchWeather();
-                  });
-            }
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }),
+            }),
+      ),
     );
   }
 }
