@@ -1,8 +1,13 @@
+import 'dart:convert';
+
 import 'package:weather_app/dataStore/data_store.dart';
 import 'package:weather_app/models/city.dart';
 
 abstract class CityListDataSource {
   List<City> featchCities();
+  List<City> featchSelectedCities();
+  saveSelectedCities(List<City> cityList);
+  selectCity(City city);
 }
 
 class CityListDataSourceImpl implements CityListDataSource {
@@ -15,6 +20,36 @@ class CityListDataSourceImpl implements CityListDataSource {
   @override
   List<City> featchCities() {
     return cities.map((e) => City.fromJson(e)).toList();
+  }
+
+  @override
+  List<City> featchSelectedCities() {
+    var cityData = dataStore.read('selected_cities');
+    if (cityData != null) {
+      try {
+        var cityList =
+            List<City>.from(json.decode(cityData).map((x) => City.fromJson(x)));
+        return cityList;
+      } catch (_) {
+        return [];
+      }
+    }
+    return [];
+  }
+
+  @override
+  saveSelectedCities(List<City> _selectedCities) {
+    dataStore.save('selected_cities',
+        json.encode(List<dynamic>.from(_selectedCities.map((x) => x.toJson()))));
+  }
+
+  @override
+  void selectCity(City city) {
+    var _selectedCities = featchSelectedCities();
+    if (!_selectedCities.contains(city)) {
+      _selectedCities.add(city);
+    }
+    saveSelectedCities(_selectedCities);
   }
 }
 

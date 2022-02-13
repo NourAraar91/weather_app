@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:weather_app/dataStore/data_store.dart';
 import 'package:weather_app/screens/city_select_screen.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await DataStore.initPrefs();
   runApp(const MyApp());
 }
 

@@ -40,6 +40,12 @@ class CityListScreenBloc extends Cubit<CityListScreenState> {
   List<City> featchCities() {
     return cityListDataSource.featchCities();
   }
+
+  void selecteCity(City city) {
+    cityListDataSource.selectCity(city);
+    emit(CityListScreenLoadedState(
+        cities: cityListDataSource.featchSelectedCities()));
+  }
 }
 
 class CityListScreen extends StatefulWidget {
@@ -61,23 +67,28 @@ class _CityListScreenState extends State<CityListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        backgroundColor: Colors.grey.shade900,
         appBar: AppBar(
           elevation: 0,
           backgroundColor: Colors.transparent,
           actions: [
             IconButton(
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) {
-                      return CitySelectionScreen(
-                          items: _bloc.featchCities()
-                    );})
-                  );
+                  Navigator.push<City>(context,
+                      MaterialPageRoute(builder: (context) {
+                    return CitySelectionScreen(
+                      items: _bloc.featchCities(),
+                    );
+                  })).then((City? city) {
+                    if (city != null) {
+                      _bloc.selecteCity(city);
+                      setState(() {});
+                    }
+                  });
                 },
                 icon: const Icon(
                   Icons.add_circle_outline,
-                  color: Colors.black,
+                  color: Colors.white,
                 ))
           ],
         ),
@@ -104,12 +115,6 @@ class _CityListScreenState extends State<CityListScreen> {
             );
           },
         ));
-  }
-
-  @override
-  void dispose() {
-    _bloc.close();
-    super.dispose();
   }
 }
 
@@ -222,11 +227,5 @@ class _CityWeatherWidgetState extends State<CityWeatherWidget> {
             );
           }),
     );
-  }
-
-  @override
-  void dispose() {
-    widget.weatherScreenBloc.close();
-    super.dispose();
   }
 }

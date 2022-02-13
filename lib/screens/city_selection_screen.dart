@@ -74,7 +74,7 @@ class _CitySelectionScreenState extends State<CitySelectionScreen> {
                     widget.onSelectItem!(index, items[index]);
                   }
                 },
-                child: ListItem(title: items[index].name ?? "")),
+                child: ListItem(title: items[index].name)),
           );
         });
   }

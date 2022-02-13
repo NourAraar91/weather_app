@@ -1,9 +1,11 @@
-class City implements Comparable {
-  double lat;
-  double lon;
-  String name;
+import 'package:equatable/equatable.dart';
 
-  City({
+class City extends Equatable implements Comparable {
+  final double lat;
+  final double lon;
+  final String name;
+
+  const City({
     required this.lat,
     required this.lon,
     required this.name,
@@ -20,6 +22,8 @@ class City implements Comparable {
         "lat": lat,
         "lng": lon,
       };
+  @override
+  List<Object?> get props => [name];
 
   @override
   int compareTo(other) {

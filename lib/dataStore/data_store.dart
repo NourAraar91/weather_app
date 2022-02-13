@@ -21,15 +21,15 @@ class DataStore {
 
   SharedPreferences get prefs => _prefs;
 
-  read(String key) async {
+  read(String key)  {
     return prefs.getString(key);
   }
 
-  save(String key, value) async {
+  save(String key, value)  {
     prefs.setString(key, value);
   }
 
-  remove(String key) async {
+  remove(String key)  {
     prefs.remove(key);
   }
 }
