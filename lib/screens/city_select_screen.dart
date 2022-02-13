@@ -108,20 +108,21 @@ class _CityWeatherWidgetState extends State<CityWeatherWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
+    return Container(
       padding: const EdgeInsets.all(8.0),
-      child: Container(
-        height: 150,
-        padding: const EdgeInsets.all(16.0),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          color: Colors.red,
-        ),
-        child: BlocBuilder<WeatherScreenBloc, WeatherBlocState>(
-            bloc: widget.weatherScreenBloc,
-            builder: (context, state) {
-              if (state is WeatherLoadedState) {
-                return Column(
+      height: 150,
+      child: BlocBuilder<WeatherScreenBloc, WeatherBlocState>(
+          bloc: widget.weatherScreenBloc,
+          builder: (context, state) {
+            if (state is WeatherLoadedState) {
+              return Container(
+                height: 150,
+                padding: const EdgeInsets.all(16.0),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  image: DecorationImage(image: state.img, fit: BoxFit.fill),
+                ),
+                child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Row(
@@ -181,20 +182,20 @@ class _CityWeatherWidgetState extends State<CityWeatherWidget> {
                           )
                         ],
                       )
-                    ]);
-              }
-              if (state is WeatherFailureState) {
-                return CustomErrorWidget(
-                    errorMessage: "Something went wrong",
-                    onRetryPressed: () {
-                      widget.weatherScreenBloc.featchWeather();
-                    });
-              }
-              return const Center(
-                child: CircularProgressIndicator(),
+                    ]),
               );
-            }),
-      ),
+            }
+            if (state is WeatherFailureState) {
+              return CustomErrorWidget(
+                  errorMessage: "Something went wrong",
+                  onRetryPressed: () {
+                    widget.weatherScreenBloc.featchWeather();
+                  });
+            }
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }),
     );
   }
 

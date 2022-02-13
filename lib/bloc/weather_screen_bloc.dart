@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:weather_app/api/api_client.dart';
@@ -50,6 +51,7 @@ class WeatherLoadedState extends WeatherBlocState {
   String get description => currentWeather.weather.first.description ?? '';
   int get temp => currentWeather.main.temp!.toInt();
   String get time => currentWeather.dt.formatedDate(DateFormat.HOUR_MINUTE);
+  AssetImage get img => currentWeather.weather[0].image;
 
   @override
   List<Object?> get props => [currentWeather];
