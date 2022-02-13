@@ -1,6 +1,7 @@
 import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:weather_app/bloc/forecast_weather_screen_bloc.dart';
 import 'package:weather_app/bloc/weather_screen_bloc.dart';
 import 'package:weather_app/dataSource/weather_data_source.dart';
 import 'package:weather_app/models/city.dart';
@@ -15,6 +16,7 @@ void main() {
   late MockAPIClient apiClient;
 
   late WeatherScreenBloc weatherScreenBloc;
+  late ForecastWeatherScreenBloc forecastWeatherScreenBloc;
 
   City _kualaLumpur = City(lat: 3.1478, lon: 101.6953);
 
@@ -30,6 +32,16 @@ void main() {
       dataSource: dataSource,
       city: _kualaLumpur,
     );
+
+    forecastWeatherScreenBloc = ForecastWeatherScreenBloc(
+      dataSource: dataSource,
+      city: _kualaLumpur,
+    );
+  });
+  
+  tearDown(() {
+    forecastWeatherScreenBloc.close();
+    weatherScreenBloc.close();
   });
 
   group('weather test', () {
@@ -98,8 +110,8 @@ void main() {
   group('forecast test', () {
     blocTest(
       'should have [LoadingForecastState, ForecastWeatherLoadedState] when call featchForecastWeather',
-      build: () => weatherScreenBloc,
-      act: (WeatherScreenBloc bloc) {
+      build: () => forecastWeatherScreenBloc,
+      act: (ForecastWeatherScreenBloc bloc) {
         when(() => apiClient.getForecastWeatherByLatAndLng(
                 _kualaLumpur.lat, _kualaLumpur.lon))
             .thenAnswer((_) async => _forcastResult);
@@ -112,8 +124,8 @@ void main() {
     );
     blocTest(
       'should have a weather response when featchWeather return',
-      build: () => weatherScreenBloc,
-      act: (WeatherScreenBloc bloc) {
+      build: () => forecastWeatherScreenBloc,
+      act: (ForecastWeatherScreenBloc bloc) {
         when(() => apiClient.getForecastWeatherByLatAndLng(
                 _kualaLumpur.lat, _kualaLumpur.lon))
             .thenAnswer((_) async => _forcastResult);
@@ -127,8 +139,8 @@ void main() {
 
     blocTest(
       'should have a [LoadingForecastState, ForecastWeatherFailureState] response when featchForecastWeather return 404',
-      build: () => weatherScreenBloc,
-      act: (WeatherScreenBloc bloc) {
+      build: () => forecastWeatherScreenBloc,
+      act: (ForecastWeatherScreenBloc bloc) {
         when(() => apiClient.getForecastWeatherByLatAndLng(
             _kualaLumpur.lat, _kualaLumpur.lon)).thenThrow(
           DioError(
