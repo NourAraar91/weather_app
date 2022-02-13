@@ -20,9 +20,9 @@ void main() {
 
   City _kualaLumpur = City(lat: 3.1478, lon: 101.6953);
 
-  CurrentWeather _currentWeather = CurrentWeather();
+  CurrentWeather _currentWeather = MockDataProvider.currentWeatherFixture();
 
-  ForcastResult _forcastResult = ForcastResult();
+  ForcastResult _forcastResult = MockDataProvider.currentForecastFixture();
 
   setUp(() async {
     apiClient = MockAPIClient();
@@ -38,7 +38,7 @@ void main() {
       city: _kualaLumpur,
     );
   });
-  
+
   tearDown(() {
     forecastWeatherScreenBloc.close();
     weatherScreenBloc.close();
