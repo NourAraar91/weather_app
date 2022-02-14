@@ -8,6 +8,8 @@ abstract class CityListDataSource {
   List<City> featchSelectedCities();
   saveSelectedCities(List<City> cityList);
   selectCity(City city);
+  City? getCurrentCityCache();
+  setCurrentCityCache(City city);
 }
 
 class CityListDataSourceImpl implements CityListDataSource {
@@ -39,8 +41,24 @@ class CityListDataSourceImpl implements CityListDataSource {
 
   @override
   saveSelectedCities(List<City> _selectedCities) {
-    dataStore.save('selected_cities',
-        json.encode(List<dynamic>.from(_selectedCities.map((x) => x.toJson()))));
+    dataStore.save(
+        'selected_cities',
+        json.encode(
+            List<dynamic>.from(_selectedCities.map((x) => x.toJson()))));
+  }
+
+  @override
+  City? getCurrentCityCache() {
+    var currentCityData = dataStore.read('current_city');
+    if (currentCityData != null) {
+      return City.fromJson(json.decode(currentCityData));
+    }
+    return null;
+  }
+
+  @override
+  setCurrentCityCache(City city) {
+    dataStore.prefs.setString("current_city", json.encode(city.toJson()));
   }
 
   @override
