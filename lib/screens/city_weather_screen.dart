@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:weather_app/bloc/forecast_weather_screen_bloc.dart';
 import 'package:weather_app/bloc/weather_screen_bloc.dart';
 import 'package:weather_app/models/weather.dart';
-import 'package:weather_app/screens/city_select_screen.dart';
+import 'package:weather_app/screens/city_list_screen.dart';
 import 'package:weather_app/widgets/forcast_weather_widget.dart';
 import 'package:weather_app/widgets/tempruter_text.dart';
 

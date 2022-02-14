@@ -25,19 +25,21 @@ class CurrentWeather {
 @JsonSerializable()
 class Weather {
   Weather({
+    required this.id,
     this.main,
     this.description,
     this.icon,
     this.condition,
   });
 
+  final int id;
   final String? main;
   final String? description;
   final String? icon;
   final WeatherCondition? condition;
 
   AssetImage get image {
-    return condition?.image ?? const AssetImage('assets/images/800.png');
+    return _mapStringToWeatherCondition(id).image;
   }
 
   factory Weather.fromJson(Map<String, dynamic> json) =>
@@ -144,7 +146,7 @@ extension on WeatherCondition {
       case WeatherCondition.snow:
         return const AssetImage('assets/images/600.png');
       case WeatherCondition.sleet:
-        return const AssetImage('assets/im´ages/611.png');
+        return const AssetImage('assets/images/611.png');
       case WeatherCondition.hail:
         return const AssetImage('assets/images/504.png');
       case WeatherCondition.thunderstorm:

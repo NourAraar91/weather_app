@@ -1,4 +1,3 @@
-import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:weather_app/api/api_client.dart';
@@ -9,24 +8,21 @@ import 'package:weather_app/dataSource/weather_data_source.dart';
 import 'package:weather_app/models/city.dart';
 import 'package:weather_app/screens/city_selection_screen.dart';
 import 'package:weather_app/screens/city_weather_screen.dart';
+import 'package:weather_app/services/location_service.dart';
 import 'package:weather_app/widgets/error_widget.dart';
 import 'package:weather_app/widgets/tempruter_text.dart';
 import 'package:dio/dio.dart';
 
-abstract class CityListScreenState extends Equatable {}
+abstract class CityListScreenState {}
 
-class CityListScreenInitialState extends CityListScreenState {
-  @override
-  List<Object?> get props => [];
-}
+class CityListScreenInitialState extends CityListScreenState {}
+
+class CityListScreenLoadingState extends CityListScreenState {}
 
 class CityListScreenLoadedState extends CityListScreenState {
   final List<City> cities;
 
   CityListScreenLoadedState({required this.cities});
-
-  @override
-  List<Object?> get props => [];
 }
 
 class CityListScreenBloc extends Cubit<CityListScreenState> {
@@ -35,7 +31,11 @@ class CityListScreenBloc extends Cubit<CityListScreenState> {
   CityListScreenBloc() : super(CityListScreenInitialState());
 
   featchSelectedCities() {
-    final cities = cityListDataSource.featchSelectedCities();
+    var cities = cityListDataSource.featchSelectedCities();
+    final cachedCurrentCity = cityListDataSource.getCurrentCityCache();
+    if (cachedCurrentCity != null) {
+      cities.insert(0, cachedCurrentCity);
+    }
     emit(CityListScreenLoadedState(cities: cities));
   }
 
@@ -48,6 +48,17 @@ class CityListScreenBloc extends Cubit<CityListScreenState> {
     emit(CityListScreenLoadedState(
         cities: cityListDataSource.featchSelectedCities()));
   }
+
+  Future<void> fetchUserCurrentCity() async {
+    emit(CityListScreenLoadingState());
+    final currentLocation = await LocationService.getCurrentLocation();
+    var city = City(
+        lat: currentLocation.latitude,
+        lon: currentLocation.longitude,
+        name: "Current Location");
+    cityListDataSource.setCurrentCityCache(city);
+    featchSelectedCities();
+  }
 }
 
 class CityListScreen extends StatefulWidget {
@@ -58,12 +69,18 @@ class CityListScreen extends StatefulWidget {
 }
 
 class _CityListScreenState extends State<CityListScreen> {
-  final CityListScreenBloc _bloc = CityListScreenBloc();
+  late CityListScreenBloc _bloc;
 
   @override
   void initState() {
-    _bloc.featchSelectedCities();
+    _bloc = CityListScreenBloc();
+    setUp();
     super.initState();
+  }
+
+  setUp() async {
+    await _bloc.fetchUserCurrentCity();
+    _bloc.featchSelectedCities();
   }
 
   @override
@@ -80,13 +97,13 @@ class _CityListScreenState extends State<CityListScreen> {
                       MaterialPageRoute(builder: (context) {
                     return CitySelectionScreen(
                       items: _bloc.featchCities(),
+                      onSelectItem: (index, city) {
+                        _bloc.selecteCity(city);
+                        _bloc.featchSelectedCities();
+                        Navigator.pop(context);
+                      },
                     );
-                  })).then((City? city) {
-                    if (city != null) {
-                      _bloc.selecteCity(city);
-                      setState(() {});
-                    }
-                  });
+                  }));
                 },
                 icon: const Icon(
                   Icons.add_circle_outline,
@@ -98,19 +115,25 @@ class _CityListScreenState extends State<CityListScreen> {
           bloc: _bloc,
           builder: (context, state) {
             if (state is CityListScreenLoadedState) {
-              return ListView.builder(
-                  itemCount: state.cities.length,
-                  itemBuilder: (context, index) {
-                    return CityWeatherWidget(
-                      weatherScreenBloc: WeatherScreenBloc(
-                          city: state.cities[index],
-                          dataSource: WeatherDataSourceImpl(
-                            apiClient: APIClient(
-                              Dio(),
-                            ),
-                          )),
-                    );
-                  });
+              return RefreshIndicator(
+                onRefresh: () async {
+                  setUp();
+                  return;
+                },
+                child: ListView.builder(
+                    itemCount: state.cities.length,
+                    itemBuilder: (context, index) {
+                      return CityWeatherWidget(
+                        weatherScreenBloc: WeatherScreenBloc(
+                            city: state.cities[index],
+                            dataSource: WeatherDataSourceImpl(
+                              apiClient: APIClient(
+                                Dio(),
+                              ),
+                            )),
+                      );
+                    }),
+              );
             }
             return const Center(
               child: CircularProgressIndicator(),
