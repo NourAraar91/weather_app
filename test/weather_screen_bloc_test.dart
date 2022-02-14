@@ -22,7 +22,7 @@ void main() {
 
   CurrentWeather _currentWeather = MockDataProvider.currentWeatherFixture();
 
-  ForcastResult _forcastResult = MockDataProvider.currentForecastFixture();
+  ForecastResult _forcastResult = MockDataProvider.currentForecastFixture();
 
   setUp(() async {
     apiClient = MockAPIClient();

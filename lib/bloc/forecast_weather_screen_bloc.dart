@@ -46,7 +46,7 @@ class LoadingForecastState extends ForecastWeatherBlocState {
 }
 
 class ForecastWeatherLoadedState extends ForecastWeatherBlocState {
-  final ForcastResult forcastResult;
+  final ForecastResult forcastResult;
   ForecastWeatherLoadedState({required this.forcastResult});
 
   @override

@@ -21,8 +21,8 @@ class MockDataProvider {
         ));
   }
 
-  static ForcastResult currentForecastFixture() {
-    return ForcastResult(
+  static ForecastResult currentForecastFixture() {
+    return ForecastResult(
         list: [],
         city: Place(
           coord: Coord(lat: 2.4, lon: 110.1),
@@ -36,7 +36,7 @@ void main() {
   late MockAPIClient apiClient;
 
   CurrentWeather _mockWeather = MockDataProvider.currentWeatherFixture();
-  ForcastResult _mockForecastResult = MockDataProvider.currentForecastFixture();
+  ForecastResult _mockForecastResult = MockDataProvider.currentForecastFixture();
 
   setUp(() async {
     registerFallbackValue(Uri());

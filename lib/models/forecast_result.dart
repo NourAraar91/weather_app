@@ -5,8 +5,8 @@ import 'package:weather_app/models/weather.dart';
 part 'forecast_result.g.dart';
 
 @JsonSerializable()
-class ForcastResult {
-  ForcastResult({
+class ForecastResult {
+  ForecastResult({
     required this.list,
     required this.city,
   });
@@ -14,9 +14,9 @@ class ForcastResult {
   List<CurrentWeather> list;
   Place city;
 
-  factory ForcastResult.fromJson(Map<String, dynamic> json) =>
-      _$ForcastResultFromJson(json);
-  Map<String, dynamic> toJson() => _$ForcastResultToJson(this);
+  factory ForecastResult.fromJson(Map<String, dynamic> json) =>
+      _$ForecastResultFromJson(json);
+  Map<String, dynamic> toJson() => _$ForecastResultToJson(this);
 }
 
 @JsonSerializable()

@@ -38,7 +38,7 @@ class _APIClient implements APIClient {
   }
 
   @override
-  Future<ForcastResult> getForecastWeatherByLatAndLng(lat, lon,
+  Future<ForecastResult> getForecastWeatherByLatAndLng(lat, lon,
       {units = 'metric', appid = Config.APP_ID}) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{
@@ -50,12 +50,12 @@ class _APIClient implements APIClient {
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
     final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<ForcastResult>(
+        _setStreamType<ForecastResult>(
             Options(method: 'GET', headers: _headers, extra: _extra)
                 .compose(_dio.options, '/forecast',
                     queryParameters: queryParameters, data: _data)
                 .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
-    final value = ForcastResult.fromJson(_result.data!);
+    final value = ForecastResult.fromJson(_result.data!);
     return value;
   }
 
