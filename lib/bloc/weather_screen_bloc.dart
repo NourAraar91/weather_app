@@ -19,6 +19,13 @@ class WeatherScreenBloc extends Cubit<WeatherBlocState> {
 
   void featchWeather() async {
     emit(LoadingWeatherState());
+    if (dataSource.weatherCache.containsKey(city.name)) {
+      final cachedWeather = dataSource.weatherCache[city.name];
+      if (cachedWeather != null) {
+        emit(WeatherLoadedState(currentWeather: cachedWeather));
+      }
+    }
+
     try {
       final response =
           await dataSource.getWeatherByLatAndLng(city.lat, city.lon);

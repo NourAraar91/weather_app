@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:dio/dio.dart';
+import 'package:weather_app/api/api_client.dart';
+import 'package:weather_app/dataSource/weather_data_source.dart';
 import 'package:weather_app/dataStore/data_store.dart';
 import 'package:weather_app/screens/city_list_screen.dart';
 
@@ -19,7 +22,9 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const CityListScreen(),
+      home: CityListScreen(
+        dataSource: WeatherDataSourceImpl(apiClient: APIClient(Dio())),
+      ),
     );
   }
 }

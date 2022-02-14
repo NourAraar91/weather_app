@@ -16,6 +16,13 @@ class ForecastWeatherScreenBloc extends Cubit<ForecastWeatherBlocState> {
 
   void featchForecastWeather() async {
     emit(LoadingForecastState());
+    if (dataSource.forecastCache.containsKey(city.name)) {
+      final cachedForecast = dataSource.forecastCache[city.name];
+      if (cachedForecast != null) {
+        emit(ForecastWeatherLoadedState(forcastResult: cachedForecast));
+      }
+    }
+
     try {
       final response =
           await dataSource.getForecastWeatherByLatAndLng(city.lat, city.lon);
@@ -32,7 +39,6 @@ class ForecastWeatherBlocInitialState extends ForecastWeatherBlocState {
   @override
   List<Object?> get props => [];
 }
-
 
 class LoadingForecastState extends ForecastWeatherBlocState {
   @override

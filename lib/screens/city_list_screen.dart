@@ -62,7 +62,8 @@ class CityListScreenBloc extends Cubit<CityListScreenState> {
 }
 
 class CityListScreen extends StatefulWidget {
-  const CityListScreen({Key? key}) : super(key: key);
+  final WeatherDataSource dataSource;
+  const CityListScreen({Key? key, required this.dataSource}) : super(key: key);
 
   @override
   State<CityListScreen> createState() => _CityListScreenState();
@@ -98,9 +99,9 @@ class _CityListScreenState extends State<CityListScreen> {
                     return CitySelectionScreen(
                       items: _bloc.featchCities(),
                       onSelectItem: (index, city) {
+                        Navigator.pop(context);
                         _bloc.selecteCity(city);
                         _bloc.featchSelectedCities();
-                        Navigator.pop(context);
                       },
                     );
                   }));
@@ -126,11 +127,7 @@ class _CityListScreenState extends State<CityListScreen> {
                       return CityWeatherWidget(
                         weatherScreenBloc: WeatherScreenBloc(
                             city: state.cities[index],
-                            dataSource: WeatherDataSourceImpl(
-                              apiClient: APIClient(
-                                Dio(),
-                              ),
-                            )),
+                            dataSource: widget.dataSource),
                       );
                     }),
               );
@@ -165,8 +162,7 @@ class _CityWeatherWidgetState extends State<CityWeatherWidget> {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        Navigator.pushReplacement(context,
-            MaterialPageRoute(builder: (context) {
+        Navigator.push(context, MaterialPageRoute(builder: (context) {
           return MultiBlocProvider(
             providers: [
               BlocProvider<WeatherScreenBloc>(

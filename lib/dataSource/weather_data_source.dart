@@ -7,26 +7,37 @@ abstract class WeatherDataSource {
   Future<CurrentWeather> getWeatherByLatAndLng(double lat, double lon);
 
   Future<ForcastResult> getForecastWeatherByLatAndLng(double lat, double lon);
+  late Map<String, CurrentWeather> weatherCache;
+  late Map<String, ForcastResult> forecastCache;
 }
 
 class WeatherDataSourceImpl implements WeatherDataSource {
+  @override
+  Map<String, CurrentWeather> weatherCache = {};
+  @override
+  Map<String, ForcastResult> forecastCache = {};
   final APIClient apiClient;
 
   WeatherDataSourceImpl({required this.apiClient});
 
   @override
-  Future<CurrentWeather> getWeatherByLatAndLng(double lat, double lon) {
+  Future<CurrentWeather> getWeatherByLatAndLng(double lat, double lon) async {
     try {
-      return apiClient.getWeatherByLatAndLng(lat, lon);
+      final response = await apiClient.getWeatherByLatAndLng(lat, lon);
+      weatherCache[response.name!] = response;
+      return response;
     } on DioError catch (_) {
       throw ServerException();
     }
   }
 
   @override
-  Future<ForcastResult> getForecastWeatherByLatAndLng(double lat, double lon) {
+  Future<ForcastResult> getForecastWeatherByLatAndLng(
+      double lat, double lon) async {
     try {
-      return apiClient.getForecastWeatherByLatAndLng(lat, lon);
+      final response = await apiClient.getForecastWeatherByLatAndLng(lat, lon);
+      forecastCache[response.city.name] = response;
+      return response;
     } on DioError catch (_) {
       throw ServerException();
     }
