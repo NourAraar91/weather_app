@@ -6,16 +6,16 @@ import 'package:dio/dio.dart';
 abstract class WeatherDataSource {
   Future<CurrentWeather> getWeatherByLatAndLng(double lat, double lon);
 
-  Future<ForcastResult> getForecastWeatherByLatAndLng(double lat, double lon);
+  Future<ForecastResult> getForecastWeatherByLatAndLng(double lat, double lon);
   late Map<String, CurrentWeather> weatherCache;
-  late Map<String, ForcastResult> forecastCache;
+  late Map<String, ForecastResult> forecastCache;
 }
 
 class WeatherDataSourceImpl implements WeatherDataSource {
   @override
   Map<String, CurrentWeather> weatherCache = {};
   @override
-  Map<String, ForcastResult> forecastCache = {};
+  Map<String, ForecastResult> forecastCache = {};
   final APIClient apiClient;
 
   WeatherDataSourceImpl({required this.apiClient});
@@ -32,7 +32,7 @@ class WeatherDataSourceImpl implements WeatherDataSource {
   }
 
   @override
-  Future<ForcastResult> getForecastWeatherByLatAndLng(
+  Future<ForecastResult> getForecastWeatherByLatAndLng(
       double lat, double lon) async {
     try {
       final response = await apiClient.getForecastWeatherByLatAndLng(lat, lon);

@@ -6,15 +6,15 @@ part of 'forecast_result.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-ForcastResult _$ForcastResultFromJson(Map<String, dynamic> json) =>
-    ForcastResult(
+ForecastResult _$ForecastResultFromJson(Map<String, dynamic> json) =>
+    ForecastResult(
       list: (json['list'] as List<dynamic>)
           .map((e) => CurrentWeather.fromJson(e as Map<String, dynamic>))
           .toList(),
       city: Place.fromJson(json['city'] as Map<String, dynamic>),
     );
 
-Map<String, dynamic> _$ForcastResultToJson(ForcastResult instance) =>
+Map<String, dynamic> _$ForecastResultToJson(ForecastResult instance) =>
     <String, dynamic>{
       'list': instance.list,
       'city': instance.city,

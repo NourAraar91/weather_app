@@ -21,7 +21,7 @@ abstract class APIClient {
   });
 
   @GET('/forecast')
-  Future<ForcastResult> getForecastWeatherByLatAndLng(
+  Future<ForecastResult> getForecastWeatherByLatAndLng(
     @Query("lat") double lat,
     @Query("lon") double lon, {
     @Query("units") String units = 'metric',
