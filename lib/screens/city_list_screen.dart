@@ -84,9 +84,12 @@ class _CityListScreenState extends State<CityListScreen> {
                     }),
               );
             }
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
+            if (state is CityListScreenLoadingState) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+            return Container();
           },
         ));
   }

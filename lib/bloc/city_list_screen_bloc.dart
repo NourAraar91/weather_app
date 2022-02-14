@@ -29,13 +29,17 @@ class CityListScreenCubit extends Cubit<CityListScreenState> {
 
   Future<void> fetchUserCurrentCity() async {
     emit(CityListScreenLoadingState());
-    final currentLocation = await LocationService.getCurrentLocation();
-    var city = City(
-        lat: currentLocation.latitude,
-        lon: currentLocation.longitude,
-        name: "Current Location");
-    cityListDataSource.setCurrentCityCache(city);
-    featchSelectedCities();
+    try {
+      final currentLocation = await LocationService.getCurrentLocation();
+      var city = City(
+          lat: currentLocation.latitude,
+          lon: currentLocation.longitude,
+          name: "Current Location");
+      cityListDataSource.setCurrentCityCache(city);
+      featchSelectedCities();
+    } catch (_) {
+      emit(CityListScreenInitialState());
+    }
   }
 }
 
