@@ -3,10 +3,12 @@ import 'package:weather_app/models/weather.dart';
 import 'package:weather_app/widgets/tempruter_text.dart';
 import 'package:weather_app/extensions/extensions.dart';
 
-class ForcastWeatherWidget extends StatelessWidget {
-  const ForcastWeatherWidget({Key? key, required this.element})
+class ForecastWeatherWidget extends StatelessWidget {
+  const ForecastWeatherWidget({Key? key, required this.element})
       : super(key: key);
+
   final CurrentWeather element;
+
   @override
   Widget build(BuildContext context) {
     return Card(
