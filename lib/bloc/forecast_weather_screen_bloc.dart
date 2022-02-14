@@ -5,11 +5,11 @@ import 'package:weather_app/api/api_client.dart';
 import 'package:weather_app/dataSource/weather_data_source.dart';
 import 'package:weather_app/models/city.dart';
 
-class ForecastWeatherScreenBloc extends Cubit<ForecastWeatherBlocState> {
+class ForecastWeatherScreenCubit extends Cubit<ForecastWeatherBlocState> {
   final WeatherDataSource dataSource;
   final City city;
 
-  ForecastWeatherScreenBloc({
+  ForecastWeatherScreenCubit({
     required this.dataSource,
     required this.city,
   }) : super(ForecastWeatherBlocInitialState());

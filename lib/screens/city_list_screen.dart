@@ -1,65 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:weather_app/api/api_client.dart';
+import 'package:weather_app/bloc/city_list_screen_bloc.dart';
 import 'package:weather_app/bloc/forecast_weather_screen_bloc.dart';
 import 'package:weather_app/bloc/weather_screen_bloc.dart';
-import 'package:weather_app/dataSource/city_list_data_source.dart';
 import 'package:weather_app/dataSource/weather_data_source.dart';
 import 'package:weather_app/models/city.dart';
 import 'package:weather_app/screens/city_selection_screen.dart';
 import 'package:weather_app/screens/city_weather_screen.dart';
-import 'package:weather_app/services/location_service.dart';
 import 'package:weather_app/widgets/error_widget.dart';
 import 'package:weather_app/widgets/tempruter_text.dart';
 import 'package:dio/dio.dart';
-
-abstract class CityListScreenState {}
-
-class CityListScreenInitialState extends CityListScreenState {}
-
-class CityListScreenLoadingState extends CityListScreenState {}
-
-class CityListScreenLoadedState extends CityListScreenState {
-  final List<City> cities;
-
-  CityListScreenLoadedState({required this.cities});
-}
-
-class CityListScreenBloc extends Cubit<CityListScreenState> {
-  CityListDataSource cityListDataSource = CityListDataSourceImpl();
-
-  CityListScreenBloc() : super(CityListScreenInitialState());
-
-  featchSelectedCities() {
-    var cities = cityListDataSource.featchSelectedCities();
-    final cachedCurrentCity = cityListDataSource.getCurrentCityCache();
-    if (cachedCurrentCity != null) {
-      cities.insert(0, cachedCurrentCity);
-    }
-    emit(CityListScreenLoadedState(cities: cities));
-  }
-
-  List<City> featchCities() {
-    return cityListDataSource.featchCities();
-  }
-
-  void selecteCity(City city) {
-    cityListDataSource.selectCity(city);
-    emit(CityListScreenLoadedState(
-        cities: cityListDataSource.featchSelectedCities()));
-  }
-
-  Future<void> fetchUserCurrentCity() async {
-    emit(CityListScreenLoadingState());
-    final currentLocation = await LocationService.getCurrentLocation();
-    var city = City(
-        lat: currentLocation.latitude,
-        lon: currentLocation.longitude,
-        name: "Current Location");
-    cityListDataSource.setCurrentCityCache(city);
-    featchSelectedCities();
-  }
-}
 
 class CityListScreen extends StatefulWidget {
   final WeatherDataSource dataSource;
@@ -70,11 +21,11 @@ class CityListScreen extends StatefulWidget {
 }
 
 class _CityListScreenState extends State<CityListScreen> {
-  late CityListScreenBloc _bloc;
+  late CityListScreenCubit _bloc;
 
   @override
   void initState() {
-    _bloc = CityListScreenBloc();
+    _bloc = context.read<CityListScreenCubit>();
     setUp();
     super.initState();
   }
@@ -112,7 +63,7 @@ class _CityListScreenState extends State<CityListScreen> {
                 ))
           ],
         ),
-        body: BlocBuilder<CityListScreenBloc, CityListScreenState>(
+        body: BlocBuilder<CityListScreenCubit, CityListScreenState>(
           bloc: _bloc,
           builder: (context, state) {
             if (state is CityListScreenLoadedState) {
@@ -125,7 +76,7 @@ class _CityListScreenState extends State<CityListScreen> {
                     itemCount: state.cities.length,
                     itemBuilder: (context, index) {
                       return BlocProvider(
-                        create: ((context) => WeatherScreenBloc(
+                        create: ((context) => WeatherScreenCubit(
                             city: state.cities[index],
                             dataSource: widget.dataSource)),
                         child: const CityWeatherWidget(),
@@ -151,11 +102,11 @@ class CityWeatherWidget extends StatefulWidget {
 }
 
 class _CityWeatherWidgetState extends State<CityWeatherWidget> {
-  late WeatherScreenBloc weatherScreenBloc;
+  late WeatherScreenCubit weatherScreenBloc;
 
   @override
   void initState() {
-    weatherScreenBloc = context.read<WeatherScreenBloc>();
+    weatherScreenBloc = context.read<WeatherScreenCubit>();
     super.initState();
   }
 
@@ -172,11 +123,11 @@ class _CityWeatherWidgetState extends State<CityWeatherWidget> {
         Navigator.push(context, MaterialPageRoute(builder: (context) {
           return MultiBlocProvider(
             providers: [
-              BlocProvider<WeatherScreenBloc>(
+              BlocProvider<WeatherScreenCubit>(
                 create: (BuildContext context) => weatherScreenBloc,
               ),
-              BlocProvider<ForecastWeatherScreenBloc>(
-                  create: (BuildContext context) => ForecastWeatherScreenBloc(
+              BlocProvider<ForecastWeatherScreenCubit>(
+                  create: (BuildContext context) => ForecastWeatherScreenCubit(
                         dataSource:
                             WeatherDataSourceImpl(apiClient: APIClient(Dio())),
                         city: weatherScreenBloc.city,
@@ -189,7 +140,7 @@ class _CityWeatherWidgetState extends State<CityWeatherWidget> {
       child: Container(
         padding: const EdgeInsets.all(8.0),
         height: 150,
-        child: BlocBuilder<WeatherScreenBloc, WeatherBlocState>(
+        child: BlocBuilder<WeatherScreenCubit, WeatherBlocState>(
             bloc: weatherScreenBloc,
             builder: (context, state) {
               if (state is WeatherLoadedState) {

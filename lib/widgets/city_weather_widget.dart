@@ -16,13 +16,13 @@ class CityWeatherWidget extends StatefulWidget {
 class _CityWeatherWidgetState extends State<CityWeatherWidget> {
   @override
   void initState() {
-    context.read<WeatherScreenBloc>().featchWeather();
+    context.read<WeatherScreenCubit>().featchWeather();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<WeatherScreenBloc, WeatherBlocState>(
+    return BlocBuilder<WeatherScreenCubit, WeatherBlocState>(
         builder: (context, state) {
       if (state is WeatherLoadedState) {
         return Column(

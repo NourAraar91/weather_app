@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:weather_app/api/api_client.dart';
+import 'package:weather_app/bloc/city_list_screen_bloc.dart';
 import 'package:weather_app/dataSource/weather_data_source.dart';
 import 'package:weather_app/dataStore/data_store.dart';
 import 'package:weather_app/screens/city_list_screen.dart';
@@ -22,9 +24,11 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: CityListScreen(
-        dataSource: WeatherDataSourceImpl(apiClient: APIClient(Dio())),
-      ),
+      home: BlocProvider(
+          create: (context) => CityListScreenCubit(),
+          child: CityListScreen(
+            dataSource: WeatherDataSourceImpl(apiClient: APIClient(Dio())),
+          )),
     );
   }
 }

@@ -19,13 +19,13 @@ class _ForecastWeatherSectionWidgetState
     extends State<ForecastWeatherSectionWidget> {
   @override
   void initState() {
-    context.read<ForecastWeatherScreenBloc>().featchForecastWeather();
+    context.read<ForecastWeatherScreenCubit>().featchForecastWeather();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<ForecastWeatherScreenBloc, ForecastWeatherBlocState>(
+    return BlocBuilder<ForecastWeatherScreenCubit, ForecastWeatherBlocState>(
         builder: (context, state) {
       if (state is ForecastWeatherLoadedState) {
         return SingleChildScrollView(

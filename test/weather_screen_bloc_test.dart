@@ -15,11 +15,10 @@ void main() {
   late WeatherDataSourceImpl dataSource;
   late MockAPIClient apiClient;
 
-  late WeatherScreenBloc weatherScreenBloc;
-  late ForecastWeatherScreenBloc forecastWeatherScreenBloc;
+  late WeatherScreenCubit weatherScreenBloc;
+  late ForecastWeatherScreenCubit forecastWeatherScreenCubit;
 
-  City _kualaLumpur =
-      const City(lat: 3.1478, lon: 101.6953, name: "Kuala Lumpur");
+  City _kualaLumpur = const City(lat: 3.1478, lon: 101.6953, name: "Kuala Lumpur");
 
   CurrentWeather _currentWeather = MockDataProvider.currentWeatherFixture();
 
@@ -29,19 +28,19 @@ void main() {
     apiClient = MockAPIClient();
     dataSource = WeatherDataSourceImpl(apiClient: apiClient);
 
-    weatherScreenBloc = WeatherScreenBloc(
+    weatherScreenBloc = WeatherScreenCubit(
       dataSource: dataSource,
       city: _kualaLumpur,
     );
 
-    forecastWeatherScreenBloc = ForecastWeatherScreenBloc(
+    forecastWeatherScreenCubit = ForecastWeatherScreenCubit(
       dataSource: dataSource,
       city: _kualaLumpur,
     );
   });
 
   tearDown(() {
-    forecastWeatherScreenBloc.close();
+    forecastWeatherScreenCubit.close();
     weatherScreenBloc.close();
   });
 
@@ -58,7 +57,7 @@ void main() {
     blocTest(
       'should have [LoadingWeatherState, WeatherLoadedState] when call featchWeather',
       build: () => weatherScreenBloc,
-      act: (WeatherScreenBloc bloc) {
+      act: (WeatherScreenCubit bloc) {
         when(() => apiClient.getWeatherByLatAndLng(
                 _kualaLumpur.lat, _kualaLumpur.lon))
             .thenAnswer((_) async => _currentWeather);
@@ -72,7 +71,7 @@ void main() {
     blocTest(
       'should have a weather response when featchWeather return',
       build: () => weatherScreenBloc,
-      act: (WeatherScreenBloc bloc) {
+      act: (WeatherScreenCubit bloc) {
         when(() => apiClient.getWeatherByLatAndLng(
                 _kualaLumpur.lat, _kualaLumpur.lon))
             .thenAnswer((_) async => _currentWeather);
@@ -87,7 +86,7 @@ void main() {
     blocTest(
       'should have a [WeatherFailureState] response when featchWeather return 404',
       build: () => weatherScreenBloc,
-      act: (WeatherScreenBloc bloc) {
+      act: (WeatherScreenCubit bloc) {
         when(() => apiClient.getWeatherByLatAndLng(
             _kualaLumpur.lat, _kualaLumpur.lon)).thenThrow(
           DioError(
@@ -111,8 +110,8 @@ void main() {
   group('forecast test', () {
     blocTest(
       'should have [LoadingForecastState, ForecastWeatherLoadedState] when call featchForecastWeather',
-      build: () => forecastWeatherScreenBloc,
-      act: (ForecastWeatherScreenBloc bloc) {
+      build: () => forecastWeatherScreenCubit,
+      act: (ForecastWeatherScreenCubit bloc) {
         when(() => apiClient.getForecastWeatherByLatAndLng(
                 _kualaLumpur.lat, _kualaLumpur.lon))
             .thenAnswer((_) async => _forcastResult);
@@ -125,8 +124,8 @@ void main() {
     );
     blocTest(
       'should have a weather response when featchWeather return',
-      build: () => forecastWeatherScreenBloc,
-      act: (ForecastWeatherScreenBloc bloc) {
+      build: () => forecastWeatherScreenCubit,
+      act: (ForecastWeatherScreenCubit bloc) {
         when(() => apiClient.getForecastWeatherByLatAndLng(
                 _kualaLumpur.lat, _kualaLumpur.lon))
             .thenAnswer((_) async => _forcastResult);
@@ -140,8 +139,8 @@ void main() {
 
     blocTest(
       'should have a [LoadingForecastState, ForecastWeatherFailureState] response when featchForecastWeather return 404',
-      build: () => forecastWeatherScreenBloc,
-      act: (ForecastWeatherScreenBloc bloc) {
+      build: () => forecastWeatherScreenCubit,
+      act: (ForecastWeatherScreenCubit bloc) {
         when(() => apiClient.getForecastWeatherByLatAndLng(
             _kualaLumpur.lat, _kualaLumpur.lon)).thenThrow(
           DioError(
