@@ -39,3 +39,5 @@ bloc_test will help us test Cubit and listen to states changes.
 ### Locate user location
 I've used geolocator to get user current location.
 
+### Null safety
+everything in the code is adhering to null safety and flutter will show a `💪 Building with sound null safety 💪` when run check for null safty
