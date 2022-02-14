@@ -124,10 +124,11 @@ class _CityListScreenState extends State<CityListScreen> {
                 child: ListView.builder(
                     itemCount: state.cities.length,
                     itemBuilder: (context, index) {
-                      return CityWeatherWidget(
-                        weatherScreenBloc: WeatherScreenBloc(
+                      return BlocProvider(
+                        create: ((context) => WeatherScreenBloc(
                             city: state.cities[index],
-                            dataSource: widget.dataSource),
+                            dataSource: widget.dataSource)),
+                        child: const CityWeatherWidget(),
                       );
                     }),
               );
@@ -141,10 +142,8 @@ class _CityListScreenState extends State<CityListScreen> {
 }
 
 class CityWeatherWidget extends StatefulWidget {
-  final WeatherScreenBloc weatherScreenBloc;
   const CityWeatherWidget({
     Key? key,
-    required this.weatherScreenBloc,
   }) : super(key: key);
 
   @override
@@ -152,9 +151,17 @@ class CityWeatherWidget extends StatefulWidget {
 }
 
 class _CityWeatherWidgetState extends State<CityWeatherWidget> {
+  late WeatherScreenBloc weatherScreenBloc;
+
+  @override
+  void initState() {
+    weatherScreenBloc = context.read<WeatherScreenBloc>();
+    super.initState();
+  }
+
   @override
   void didChangeDependencies() {
-    widget.weatherScreenBloc.featchWeather();
+    weatherScreenBloc.featchWeather();
     super.didChangeDependencies();
   }
 
@@ -166,13 +173,13 @@ class _CityWeatherWidgetState extends State<CityWeatherWidget> {
           return MultiBlocProvider(
             providers: [
               BlocProvider<WeatherScreenBloc>(
-                create: (BuildContext context) => widget.weatherScreenBloc,
+                create: (BuildContext context) => weatherScreenBloc,
               ),
               BlocProvider<ForecastWeatherScreenBloc>(
                   create: (BuildContext context) => ForecastWeatherScreenBloc(
                         dataSource:
                             WeatherDataSourceImpl(apiClient: APIClient(Dio())),
-                        city: widget.weatherScreenBloc.city,
+                        city: weatherScreenBloc.city,
                       )),
             ],
             child: const CityWeatherScreen(),
@@ -183,7 +190,7 @@ class _CityWeatherWidgetState extends State<CityWeatherWidget> {
         padding: const EdgeInsets.all(8.0),
         height: 150,
         child: BlocBuilder<WeatherScreenBloc, WeatherBlocState>(
-            bloc: widget.weatherScreenBloc,
+            bloc: weatherScreenBloc,
             builder: (context, state) {
               if (state is WeatherLoadedState) {
                 return Container(
@@ -260,7 +267,7 @@ class _CityWeatherWidgetState extends State<CityWeatherWidget> {
                 return CustomErrorWidget(
                     errorMessage: "Something went wrong",
                     onRetryPressed: () {
-                      widget.weatherScreenBloc.featchWeather();
+                      weatherScreenBloc.featchWeather();
                     });
               }
               return const Center(
